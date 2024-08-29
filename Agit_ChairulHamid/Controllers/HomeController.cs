@@ -92,16 +92,15 @@ namespace Agit_ChairulHamid.Controllers
             try
             {
                 var produksiHarian = new[]
-                    {
-                    model.Produksi1,
-                    model.Produksi2,
-                    model.Produksi3,
-                    model.Produksi4,
-                    model.Produksi5,
-                    model.Produksi6,
-                    model.Produksi7
+                {
+                model.Produksi1,
+                model.Produksi2,
+                model.Produksi3,
+                model.Produksi4,
+                model.Produksi5,
+                model.Produksi6,
+                model.Produksi7
                 }.Select(p => p.GetValueOrDefault()).ToArray();
-
                 int totalProduksi = produksiHarian.Sum();
                 int hariKerja = produksiHarian.Count(x => x > 0);
                 if (hariKerja == 0)
@@ -111,7 +110,6 @@ namespace Agit_ChairulHamid.Controllers
 
                 int rataRata = totalProduksi / hariKerja;
                 int sisa = totalProduksi % hariKerja;
-
                 int[] produksiDiperbaiki = new int[7];
                 for (int i = 0; i < 7; i++)
                 {
@@ -120,9 +118,10 @@ namespace Agit_ChairulHamid.Controllers
                     else
                         produksiDiperbaiki[i] = 0;
                 }
+
                 var indeksTerbesar = produksiHarian
                     .Select((value, index) => new { Value = value, Index = index })
-                    .Where(x => x.Value > 0)
+                    .Where(x => x.Value > 0) 
                     .OrderByDescending(x => x.Value)
                     .Select(x => x.Index)
                     .ToList();
@@ -134,7 +133,6 @@ namespace Agit_ChairulHamid.Controllers
                     produksiDiperbaiki[index]++;
                     sisa--;
                 }
-
                 model.H_Produksi1 = produksiDiperbaiki[0];
                 model.H_Produksi2 = produksiDiperbaiki[1];
                 model.H_Produksi3 = produksiDiperbaiki[2];
@@ -142,9 +140,7 @@ namespace Agit_ChairulHamid.Controllers
                 model.H_Produksi5 = produksiDiperbaiki[4];
                 model.H_Produksi6 = produksiDiperbaiki[5];
                 model.H_Produksi7 = produksiDiperbaiki[6];
-
                 _koversiData.Add(model);
-
                 return Json(new
                 {
                     status = 200,
@@ -158,8 +154,6 @@ namespace Agit_ChairulHamid.Controllers
             }
         }
         #endregion
-
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
