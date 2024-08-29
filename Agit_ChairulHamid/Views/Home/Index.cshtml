@@ -1,0 +1,125 @@
+﻿@{
+    ViewData["Title"] = "Task 1";
+
+}
+<div class="text-start">
+    <h1>@ViewData["Title"] - Produksi dalam 5 hari</h1>
+</div>
+<div class="container mt-5">
+    <h5 class="text-start text mb-4">Rencana Produksi Mobil oleh Asep</h5>
+    <form id="produksiForm">
+        <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead>
+                <tr>
+                    <th scope="col">Hari</th>
+                    <th scope="col">Senin</th>
+                    <th scope="col">Selasa</th>
+                    <th scope="col">Rabu</th>
+                    <th scope="col">Kamis</th>
+                    <th scope="col">Jumat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fw-bold">Jumlah Produksi</td>
+                    <td><input type="number" class="form-control req" id="Inp_Senin" placeholder="Jumlah produksi Senin"></td>
+                    <td><input type="number" class="form-control req" id="Inp_Selasa" placeholder="Jumlah produksi Selasa"></td>
+                    <td><input type="number" class="form-control req" id="Inp_Rabu" placeholder="Jumlah produksi Rabu"></td>
+                    <td><input type="number" class="form-control req" id="Inp_Kamis" placeholder="Jumlah produksi Kamis"></td>
+                    <td><input type="number" class="form-control req" id="Inp_Jumat" placeholder="Jumlah produksi Jumat"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-end mt-12">
+            <button type="submit" class="btn btn-success" id="BtnSave">Konversi</button>
+            </div>
+        </div>
+    </form>
+</div>
+<hr />
+<div class="container mt-5">
+    <h5 class="text-start mb-4">Konversi Nilai Produksi</h5>
+    <form id="produksiForm">
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="text-start">No</th>
+                        <th colspan="6" class="text-start">Rencana Produksi Mobil oleh Asep</th>
+                        <th colspan="1" class="text-start"></th>
+                        <th colspan="6" class="text-start">Konversi Nilai (Ekspektasi Atasan)</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Senin</th>
+                        <th scope="col">Selasa</th>
+                        <th scope="col">Rabu</th>
+                        <th scope="col">Kamis</th>
+                        <th scope="col">Jumat</th>
+                        <th scope="col"></th>
+                        <th scope="col">Senin</th>
+                        <th scope="col">Selasa</th>
+                        <th scope="col">Rabu</th>
+                        <th scope="col">Kamis</th>
+                        <th scope="col">Jumat</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+                    <tr>
+                        <td colspan="15">Tidak Ada Data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<script>
+      $(function () {
+            let tableBody = $('#data-table-body');
+            tableBody.empty();
+        });
+    var data = {};
+    function getValueOnForm() {
+        data = {
+            Produksi1: +$("#Inp_Senin").val(),
+            Produksi2: +$("#Inp_Selasa").val(),
+            Produksi3: +$("#Inp_Rabu").val(),
+            Produksi4: +$("#Inp_Kamis").val(),
+            Produksi5: +$("#Inp_Jumat").val(),
+        };
+    }
+    $('body').on('click', '#BtnSave', function () {
+        if (validate_mandatory(this.id)) {
+            getValueOnForm();
+            clickTimeout = setTimeout(function () {
+                __PostData(data, "/Home/PostData", setLoad);
+            }, 500);
+        }
+    });
+    function setLoad(data) {
+        let tableBody = $('#data-table-body');
+        let no = 1;
+        tableBody.empty();
+        data.forEach(produksi => {
+            tableBody.append(`
+                            <tr>
+                                <td>${no}</td>
+                                <td>${produksi.produksi1 || 0}</td>
+                                <td>${produksi.produksi2 || 0}</td>
+                                <td>${produksi.produksi3 || 0}</td>
+                                <td>${produksi.produksi4 || 0}</td>
+                                <td>${produksi.produksi5 || 0}</td>
+                                <td></td>
+                                <td>${produksi.h_Produksi1 || 0}</td>
+                                <td>${produksi.h_Produksi2 || 0}</td>
+                                <td>${produksi.h_Produksi3 || 0}</td>
+                                <td>${produksi.h_Produksi4 || 0}</td>
+                                <td>${produksi.h_Produksi5 || 0}</td>
+                            </tr>
+                        `);
+            no++;
+        });
+        ClearButton()
+    }
+</script>
