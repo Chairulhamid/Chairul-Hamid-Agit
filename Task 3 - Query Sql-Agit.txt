@@ -1,0 +1,105 @@
+--#1. Table Fakultas
+	CREATE TABLE Fakultas (
+		KodeFakultas INT NOT NULL,
+		NamaFakultas VARCHAR(30),
+		NamaDekan VARCHAR(50)
+	)
+--#2. Table Prodi
+	CREATE TABLE Prodi (
+		KodeProdi INT NOT NULL,
+		KodeFakultas INT NOT NULL,
+		NamaProdi VARCHAR(30),
+		NamaKetuaProdi VARCHAR(50)
+	)
+--#3. Table Mahasiswa
+	CREATE TABLE Mahasiswa (
+		NPM VARCHAR(30),
+		KodeProdi INT NOT NULL,
+		NamaMahasiswa VARCHAR(50),
+		TempatLahir VARCHAR(30),
+		TanggalLahir DATETIME,
+		Alamat VARCHAR(100),
+	)
+--#4. KodeFakultas sebagai primary key dari table Fakultas
+	ALTER TABLE Fakultas
+	ADD CONSTRAINT PK_Fakultas PRIMARY KEY (KodeFakultas);
+
+--#5. menjadikan secara bersama KodeProdi dan KodeFakultas sebagai primary key
+	ALTER TABLE Prodi
+	ADD CONSTRAINT PK_Prodi PRIMARY KEY (KodeProdi, KodeFakultas);
+
+--#6. Insert Data Fakultas
+--#A.
+	INSERT INTO Fakultas (KodeFakultas, NamaFakultas, NamaDekan)
+	VALUES 
+		(1, 'Teknik', 'Ahmad Riyadi'),
+		(2, 'Pertanian', 'Paiman'),
+		(3, 'Ekonomi', 'Sukhemi'),
+		(4, 'Keguruan', 'Suherni');
+--#B,
+	INSERT INTO Prodi (KodeProdi, KodeFakultas, NamaProdi,NamaKetuaProdi)
+	VALUES 
+		(11, 1,'Teknik Informatika', 'Bachtiar Dwi Effendi'),
+		(21, 2,'Agroteknologi', 'Bahrum'),
+		(31, 3,'Manajemen', 'Vita'),
+		(32, 3,'Akuntansi', 'Siti Maisaroh'),
+		(41, 4,'PPKN', 'Sigit'),
+		(42, 4,'Sejarah', 'Gunawan'),
+		(43, 4,'Pendidikan Matematika', 'Tri'),
+		(44, 4,'Bimbingan Konseling', 'Siswanti'),
+		(45, 4,'PGSD', 'Haniek');
+--#C.
+	INSERT INTO Mahasiswa (NPM, KodeProdi, NamaMahasiswa, TempatLahir, TanggalLahir, Alamat)
+	VALUES 
+		('08110167', 11, 'Andi', 'Jakarta', '1988-03-12', 'Gunung Kidul'),
+		('08110231', 11, 'Joko', 'Sleman', '1989-02-01', 'Sleman'),
+		('08210232', 21, 'Budi', 'Bantul', '1988-09-15', 'Bantul'),
+		('08210233', 21, 'Cici', 'Purwokerto', '1989-02-21', 'Bantul'),
+		('08310234', 31, 'Didi', 'Bandung', '1987-07-11', 'Kodya'),
+		('08320235', 32, 'Alfin', 'Makasar', '1986-09-22', 'Kodya'),
+		('08320236', 32, 'Dodi', 'Gunung Kidul', '1979-03-24', 'Kodya'),
+		('08320237', 32, 'Derri', 'Pangkal Pinang', '1984-02-09', 'Sleman'),
+		('08410121', 41, 'Dudung', 'Kebumen', '1985-02-25', 'Sleman'),
+		('08410122', 41, 'Afgan', 'Palembang', '1986-11-21', 'Kulon Progo'),
+		('08420123', 42, 'Didi', 'Kotuarjo', '1986-09-11', 'Kulon Progo'),
+		('08430124', 43, 'Firza', 'Purworejo', '1986-09-11', 'Bantul'),
+		('08440125', 44, 'Zahir', 'Temom', '1986-09-11', 'Kulon Progo');
+
+--#7. menambahkan kolom tanggalDaftar di table Mahasiswa
+	ALTER TABLE Mahasiswa ADD TanggalDaftar DATETIME;
+
+--#8.  menampilkan Nama Mahasiswa dan Alamat yang lahir di tahun 70-an
+	SELECT NamaMahasiswa, Alamat FROM Mahasiswa WHERE YEAR(TanggalLahir) BETWEEN 1970 AND 1979;
+
+--#9.menampilkan seluruh nama mahasiswa beserta prodinya
+	SELECT m.*, p.NamaProdi FROM Mahasiswa m JOIN Prodi p ON m.KodeProdi = p.KodeProdi;
+
+--#10.menampilkan nama dan alamat dari 3 Mahasiswa tertua dari fakultas teknik 
+	SELECT TOP 3 m.NamaMahasiswa, m.Alamat FROM Mahasiswa m
+	JOIN Prodi p ON m.KodeProdi = p.KodeProdi
+	JOIN Fakultas f ON p.KodeFakultas = f.KodeFakultas
+	WHERE f.NamaFakultas = 'Teknik'
+	ORDER BY m.TanggalLahir ASC;
+
+--#11. menampilkan jumlah mahasiswa yang berasal dari Sleman 
+	SELECT COUNT(*) AS JumlahMahasiswa FROM Mahasiswa WHERE Alamat = 'Sleman';
+
+--#12. mengganti tanggal daftar semua mahasiswa menjadi 3 September 2013
+	UPDATE Mahasiswa SET TanggalDaftar = '2013-09-03';
+
+--#13.  menampilkan semua informasi mahasiswa yang namanya berawalan D
+	SELECT * FROM Mahasiswa WHERE NamaMahasiswa LIKE 'D%';
+
+--#14.mengganti tanggal lahir Joko menjadi 20 Januari 1990
+	UPDATE Mahasiswa SET TanggalLahir = '1990-01-20' WHERE NamaMahasiswa = 'Joko';
+
+--#15.menampilkan data nama prodi beserta jumlah mahasiswanya
+	SELECT p.NamaProdi, COUNT(m.NPM) AS JumlahMahasiswa
+	FROM Prodi p
+	LEFT JOIN Mahasiswa m ON p.KodeProdi = m.KodeProdi
+	GROUP BY p.NamaProdi;
+
+
+
+
+
